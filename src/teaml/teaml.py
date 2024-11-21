@@ -58,7 +58,6 @@ class Teaml:
 
     def __setitem__(self, key, value):
         container = self.find_container(key)
-        print("SET ITEM", key, value, type(value))
         container.container[container.key] = value
 
 
