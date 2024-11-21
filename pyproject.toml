@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "teaml"
-version = "0.0.25"
+version = "0.0.26"
 authors = [
   { name="Jesse Montrose", email="jesse@airelabs.com" },
 ]
