@@ -1,0 +1,85 @@
+Finance101:
+  Annual:
+    Battery Output: =Battery Capacity*Solar Generation Price*Inflation Factor
+    Capital Expenditures:
+      Solar Fraction of Spend: [1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      Solar: =CapEx.Solar Capital Expenditure*Solar Fraction of Spend
+      Battery Fraction of Spend: [1.0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      Battery: =CapEx.Battery Capital Expenditure*Battery Fraction of Spend
+      Total CapEx: =Capital Expenditures.Solar + Capital Expenditures.Battery
+    Cash Flow:
+      Operating Cash Flow (EBITDA): =Total Revenue - Total OpEx
+      Operating Margin: =Operating Cash Flow/Total Revenue
+      Production Tax Credits (10 year term): =Total Production * Inputs.Pricing.Production Tax Credit
+      AfterTax Operating Cash Flow: =Operating Cash Flow + Production Tax Credits + Annual.Operating Expenses.Tax Benefit
+      Total Project Cash Flow: =-Total CapEx + AfterTax Operating Cash Flow
+    Economics:
+      Inflation Factor: =(1+Inputs.Inflation)**Year
+    Operating Expenses:
+      Battery Maintenance: =Inputs.Battery Maintenance * Battery Capacity * Inflation Factor * 1000
+      Overhead: Inputs.Overhead * Inflation Factor
+      Solar Maintenance: =Solar Maintenance Factor * PV.Solar Capacity * Inflation Factor * 1000
+      Total OpEx: =Annual.Solar Maintenance + Annual.Battery Maintenance
+      Tax Benefit (Liability): 1
+    Production:
+      Battery Output: =Battery Output to Grid
+      Solar Generation: =Solar Generation Direct to Grid
+      Total Production: =Production.Solar Generation+Production.Battery Output
+    Revenue:
+      Battery Output: =Production.Battery Output*Battery Output Price*Inflation Factor
+      RECs: Renewable Energy Certificate * Total Production * Inflation Factor
+      Solar Generation: =Production.Solar Generation*Solar Generation Price*Inflation Factor
+      Total Revenue: =Revenue.Solar Generation + Revenue.Battery Output
+    Tax Calculation:
+      Depreciation: =Tax Depreciation Profile * Summary.Total CapEx
+      EBITDA: =Operating Cash Flow
+      Tax Depreciation Profile: [0.20,0.32,0.19,0.1152,0.1152,0.0576,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+      Taxable Income (Loss): =EBIDTA - Depreciation
+      Tax Benefit (Liability): =Corporate Tax Rate * Taxable Income (Loss)
+    Year: =range(1,26)
+  Summary:
+    Total Capex: =CapEx.Solar Capital Expenditure + CapEx.Battery Capital Expenditure
+    IRR: =irr(Total Project Cash Flow, 0.1)
+    NPV: =npv(Target Buyer Discount Rate, sum(Total Project Cash Flow))
+  Inputs:
+    BESS:
+      Battery Capacity: =BESS.Battery Power*BESS.Battery Duration
+      Battery Cycles per day: 1
+      Battery Duration: 4 hours
+      Battery Power: 50 MWac
+      Battery Round Trip Efficiency: 85%
+      Solar Generation Charged to Battery: =200*365*1
+    CapEx:
+      Solar Capital Expenditure Price per Mw: $1_000_000
+      Solar Capital Expenditure: =PV.Solar Capacity*CapEx.Solar Capital Expenditure Price per Mw
+      Battery Capital Expenditure Price per Kwh: $200
+      Battery Capital Expenditure: =BESS.Battery Capacity*CapEx.Battery Capital Expenditure Price per Kwh
+    Financial:
+      Corporate Tax Rate: 21%
+      Inflation: 2.5%
+      Target Buyer Discount Rate: 10%
+    Generation:
+      Battery Output to Grid: =Solar Generation Charged to Battery*Battery Round Trip Efficiency
+      Solar Generation Direct to Grid: =Total Annual Solar Generation - Solar Generation Charged to Battery
+      Total Clean Generation to Grid: =Solar Generation Direct to Grid + Battery Output to Grid
+    Operating Expenses:
+      Battery Maintenance: $3/kW/year
+      Overhead (Land, Property Tax, Insurance etc.): $1_000_000
+      Solar Maintenance Factor: $2/kW/year
+    PV:
+      Solar Capacity: 100 MWac
+      Solar Capacity Factor (portion of year operating): 25%
+      Total Annual Solar Generation: =Solar Capacity*Solar Capacity Factor*365*24
+    Parameters:
+      Units:
+        $/MWh: Dollars per Megawatt-hour
+        $/kW/year: Dollars per Kilowatt per year
+        MWac: Megawatt (AC)
+        MWh: Megawatt hour
+        MWh/yr: Megawatt hour per year
+        hours: hours
+    Pricing:
+      Battery Output Price at Peak Times: $80/MWh
+      Solar Generation Price at Midday: $30/MWh
+      Renewable Energy Certificate (REC) Value: $5.00
+      Production Tax Credit (PTC) Value: $30.00
