@@ -124,13 +124,17 @@ class Computer:
             }
         except ImportError:
             print("Warning: pyxirr not available.  No IRR/NPV functions.")
-            return {]
+            return {}
 
-    def compute(formula, context):
+    def compute(self, formula, context):
+        """
+        Compute a formula using the given context and a sandbox.
+        """
         # copy sandbox
-        local_sandbox = dict(sandbox)
+        local_sandbox = dict(self.sandbox)
         local_sandbox['eval'] = lambda f: self.compute(f, context)
         try:
+            # TODO: ast.literal_eval
             return eval(formula, local_sandbox, context)
         except TypeError as e:
             return f'#error(type: {str(e)})'
