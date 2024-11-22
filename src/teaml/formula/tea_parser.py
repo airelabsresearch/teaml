@@ -19,20 +19,6 @@ def iferror(value, alternate):
 def iserror(value):
     return bool(isinstance(value, str) and value.startswith('#error'))
 
-sandbox = {
-    'iferror': iferror,
-    'iserror': iserror,
-    'range':listify(builtins.range),
-}
-
-try:
-    from pyxirr import irr, npv
-    sandbox['irr'] = lambda values, guess: irr(values, guess=guess)
-    sandbox['npv'] = npv
-except ImportError:
-    pass
-
-
 def strip(source):
     return {
         k:v for k,v in source.items()
@@ -120,17 +106,37 @@ def filter_bases(data):
     result = {k: data[k] for k in data if k not in bases}
     return result
 
-def compute(formula, context):
-    # copy sandbox
-    local_sandbox = dict(sandbox)
-    local_sandbox['eval'] = lambda f: compute(f, context)
-    try:
-        return eval(formula, local_sandbox, context)
-    except TypeError as e:
-        return f'#error(type: {str(e)})'
-    except ZeroDivisionError:
-        return '#error(zerodiv)'
-    except KeyError as e:
-        return f'#error(key: {str(e)})'
-    except Exception as e:
-        return f'#error({str(e)})'
+class Computer:
+    def __init__(self):
+        self.sandbox = {
+            'iferror': iferror,
+            'iserror': iserror,
+            'range':listify(builtins.range),
+        }
+        self.sandbox.update(self.load_xirr())
+
+    def load_xirr(self):
+        try:
+            from pyxirr import irr, npv
+            return {
+                'irr': lambda values, guess: irr(values, guess=guess),
+                'npv': npv,
+            }
+        except ImportError:
+            print("Warning: pyxirr not available.  No IRR/NPV functions.")
+            return {]
+
+    def compute(formula, context):
+        # copy sandbox
+        local_sandbox = dict(sandbox)
+        local_sandbox['eval'] = lambda f: self.compute(f, context)
+        try:
+            return eval(formula, local_sandbox, context)
+        except TypeError as e:
+            return f'#error(type: {str(e)})'
+        except ZeroDivisionError:
+            return '#error(zerodiv)'
+        except KeyError as e:
+            return f'#error(key: {str(e)})'
+        except Exception as e:
+            return f'#error({str(e)})'

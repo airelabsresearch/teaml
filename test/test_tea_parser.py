@@ -1,7 +1,7 @@
 
 from collections import namedtuple
 
-from teaml.formula.tea_parser import Parser, create_namedtuples, filter_bases, compute
+from teaml.formula.tea_parser import Parser, Computer, create_namedtuples, filter_bases
 from teaml.utils import munge
 
 Row = namedtuple('Test', ['input', 'expected'])
@@ -10,6 +10,10 @@ simple_tests = [
     Row('abc+sum(range(1,3))', ['abc']),
     Row('abc.ghi + a.b.c', ['abc.ghi', 'a.b.c', 'abc', 'a.b', 'a']),
 ]
+
+def compute(formula, context):
+    c = Computer()
+    return c.compute(formula, context)
 
 def test_simple_parse():
     for test in simple_tests:
