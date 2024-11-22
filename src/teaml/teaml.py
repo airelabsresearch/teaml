@@ -9,7 +9,7 @@ import yaml
 
 from teaml.container import find_container
 from teaml.node import Node, NodeDict, NodeNone, NodeRange
-from teaml.formula.tea_parser import Parser, Computer, create_namedtuples, compute, filter_bases
+from teaml.formula.tea_parser import Parser, Computer, create_namedtuples, filter_bases
 from teaml.formula.vector import Vector
 from teaml.utils import single_type, munge
 
@@ -52,6 +52,10 @@ class Teaml:
         if isinstance(key, Node):
             key = key.key
         return find_container(self.root, key)
+
+    def raw(self, key):
+        container = self.find_container(key)
+        return container.value
 
     def __getitem__(self, key):
         return self.find(key)

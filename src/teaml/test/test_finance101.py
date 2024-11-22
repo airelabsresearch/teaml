@@ -1,7 +1,10 @@
 import json
 import yaml
 
-from deepdiff import DeepDiff
+try:
+    from deepdiff import DeepDiff
+except ImportError:
+    DeepDiff = None
 
 import teaml as tml
 
@@ -28,6 +31,8 @@ def test_compute_build2(finance101yaml):
     assert len(result) == 25
 
 def test_compute_local(finance101yaml):
+    if not DeepDiff:
+        return
     fin = tml.loads(finance101yaml)
     fin.compute()
     tea = fin.copy()

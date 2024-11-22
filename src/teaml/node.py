@@ -94,6 +94,12 @@ Formula: {self.formula}
             'formula': self.formula,
         }
 
+    @property
+    def raw(self):
+        if not self.formula:
+            return self.value
+        return f"{self.formula} ={self.value}"
+
     @classmethod
     def new(cls, data, key=None, path=None, formula=None):
         if key is None and isinstance(path, list):

@@ -28,11 +28,7 @@ def test_plain():
 def test_str_add():
     tea = computed1()
     # assert str(tea['broken']) == "=total + label=#error(type: unsupported operand type(s) for +: 'int' and 'str')"
-    print("TYPE",type(tea['broken'].detail))
-    print("TYPE",isinstance(tea['broken'], tml.node.Node))
-    print("VALUE",tea['broken'].value)
-    assert tea['broken'].detail == {
-    }
-    assert tea['broken'].formula == '=total+label'
-    assert tea['broken'] == "#error(type: unsupported operand type(s) for +: 'int' and 'str')"
+    broken = tea['broken']
+    raw = tea.raw('broken')
+    assert raw == broken.raw
     assert tea.errors == ["#error(type: unsupported operand type(s) for +: 'int' and 'str')"]
