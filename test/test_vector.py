@@ -40,3 +40,7 @@ def test_sub():
 def test_multi():
     a = Vector([1, 2, 3])
     assert a * 2 * 4 == [8, 16, 24]
+
+def test_negative():
+    a = Vector([1, 2, 3])
+    assert -a == [-1, -2, -3]

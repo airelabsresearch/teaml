@@ -53,3 +53,6 @@ class Vector(list):
         if isinstance(other, Vector):
             assert len(self) == len(other), f"Vector lengths: {len(self)} != {len(other)}"
             return Vector([y - x for x, y in zip(self, other)])
+
+    def __neg__(self):
+        return Vector([-x for x in self])
