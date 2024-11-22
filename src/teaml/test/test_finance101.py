@@ -61,3 +61,7 @@ def test_formulas(finance101yaml):
 def test_battery_mult(finance101yaml):
     fin = tml.loads(finance101yaml)
     assert len(fin.compute('Annual.BatteryOutput')) == 25
+
+def test_npv(finance101yaml):
+    fin = tml.loads(finance101yaml)
+    assert fin.compute('NPV') == 68746191.83357899

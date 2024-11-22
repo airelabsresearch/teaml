@@ -40,7 +40,7 @@ Finance101:
   Summary:
     Total Capex: =CapEx.Solar Capital Expenditure + CapEx.Battery Capital Expenditure
     IRR: =irr(Total Project Cash Flow, 0.1)
-    NPV: =npv(Target Buyer Discount Rate, sum(Total Project Cash Flow))
+    NPV: =npv(Target Buyer Discount Rate, Total Project Cash Flow)
   Inputs:
     BESS:
       Battery Capacity: =BESS.Battery Power*BESS.Battery Duration
