@@ -4,8 +4,6 @@ from collections import namedtuple
 
 from teaml.utils import munge
 
-import builtins
-
 currencies = {'USD':'$'}
 
 def listify(f):
@@ -25,8 +23,9 @@ def strip(source):
         if k not in ['lineno','col_offset','end_lineno','end_col_offset', 'keywords', 'type_ignores']}
 
 class Parser:
-    def __init__(self, source):
+    def __init__(self, source, sandbox):
         self.source = source
+        self.sandbox = sandbox
         self.tree = ast.parse(munge(source))
 
     def node_desc(self, node):
@@ -39,9 +38,12 @@ class Parser:
             path = [self.node_desc(node)] + path
         return path
 
+    def should_exclude(self, name):
+        return name in self.sandbox or hasattr(builtins, name)
+
     @property
     def names(self):
-        return [n for n in self._names() if not hasattr(builtins, n)]
+        return [n for n in self._names() if not self.should_exclude(n)]
 
     def _names(self):
         for n in ast.walk(self.tree):
@@ -106,11 +108,16 @@ def filter_bases(data):
     result = {k: data[k] for k in data if k not in bases}
     return result
 
+def unsupported(*args):
+    raise NotImplementedError("Unsupported operation")
+
 class Computer:
     def __init__(self):
         self.sandbox = {
             'iferror': iferror,
+            'irr': unsupported,
             'iserror': iserror,
+            'npv': unsupported,
             'range':listify(builtins.range),
         }
         self.sandbox.update(self.load_xirr())
@@ -125,6 +132,9 @@ class Computer:
         except ImportError:
             print("Warning: pyxirr not available.  No IRR/NPV functions.")
             return {}
+
+    def parse(self, source):
+        return Parser(source, sandbox=self.sandbox)
 
     def compute(self, formula, context):
         """
@@ -144,3 +154,5 @@ class Computer:
             return f'#error(key: {str(e)})'
         except Exception as e:
             return f'#error({str(e)})'
+
+computer = Computer()

@@ -4,7 +4,7 @@ from typing import List, Optional
 from teaml.nodepath import NodePath
 from teaml.value.value import Value
 from teaml.utils import single_type, munge
-from teaml.formula.tea_parser import Parser
+from teaml.formula.tea_parser import computer
 
 class Node:
     @property
@@ -44,7 +44,7 @@ class Node:
 
     @property
     def parser(self):
-        return Parser(munge(self.formula)) if self.formula is not None else None
+        return computer.parse(munge(self.formula)) if self.formula is not None else None
 
     @property
     def references(self):

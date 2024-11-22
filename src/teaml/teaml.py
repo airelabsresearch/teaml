@@ -9,7 +9,7 @@ import yaml
 
 from teaml.container import find_container
 from teaml.node import Node, NodeDict, NodeNone, NodeRange
-from teaml.formula.tea_parser import Parser, Computer, create_namedtuples, filter_bases
+from teaml.formula.tea_parser import computer, create_namedtuples, filter_bases
 from teaml.formula.vector import Vector
 from teaml.utils import single_type, munge
 
@@ -100,7 +100,7 @@ class Teaml:
         if not formula:
             return existing_node.value
         formula = munge(formula) # TODO replace with code specific to formula
-        result = self.computer.compute(formula, context)
+        result = computer.compute(formula, context)
         # TODO: Move this
         self[key] = f'={formula} ={result}'
         return result
@@ -123,7 +123,11 @@ class Teaml:
         report.append(self.TraceReport(node.key, node.value, depth, refs))
 
         for ref in refs:
-            source = self.find(ref)
+            try:
+                source = self.find(ref)
+            except KeyError:
+                report.append(self.TraceReport(ref, '#error(Key)', depth + 1, []))
+                continue
             self.trace(source, seen=seen, depth=depth + 1, report=report)
         return report
 
@@ -159,7 +163,6 @@ class Teaml:
 
     def __init__(self, root):
         self.root = root
-        self.computer = Computer()
 
     def copy(self):
         return Teaml(deepcopy(self.root))
