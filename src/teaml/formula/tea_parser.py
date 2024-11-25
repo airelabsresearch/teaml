@@ -12,6 +12,9 @@ def listify(f):
         return list(f(*args))
     return inner
 
+def concat(*args):
+    return ''.join(str(a) for a in args)
+
 def iferror(value, alternate):
     return value
 
@@ -123,6 +126,7 @@ def unsupported(*args):
 class Computer:
     def __init__(self):
         self.sandbox = {
+            'concat': concat,
             'iferror': iferror,
             'irr': unsupported,
             'iserror': iserror,
