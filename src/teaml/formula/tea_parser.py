@@ -1,5 +1,6 @@
 import ast
 import builtins
+import math
 from collections import namedtuple
 
 from teaml.utils import munge
@@ -21,6 +22,10 @@ def strip(source):
     return {
         k:v for k,v in source.items()
         if k not in ['lineno','col_offset','end_lineno','end_col_offset', 'keywords', 'type_ignores']}
+
+def roundup(number, digits=0):
+    multiplier = 10 ** digits
+    return math.ceil(number * multiplier) / multiplier
 
 class Parser:
     def __init__(self, source, sandbox):
@@ -119,6 +124,7 @@ class Computer:
             'iserror': iserror,
             'npv': unsupported,
             'range':listify(builtins.range),
+            'roundup': roundup,
         }
         self.sandbox.update(self.load_xirr())
 

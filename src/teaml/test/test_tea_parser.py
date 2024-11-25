@@ -72,6 +72,10 @@ eval_tests = [
     Row('iserror(eval("1/0"))', True),
     Row('iferror(eval("4/2"), 0)', 2),
     Row('iferror(eval("4/0"), 0)', '#error(zerodiv)'),
+    Row('max(1,3)', 3),
+    Row('min(1,3)', 1),
+    Row('round(3.14159, 2)', 3.14),
+    Row('roundup(10/9, 0)', 2),
 ]
 
 eval_symbols = {
