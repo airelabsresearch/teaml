@@ -76,6 +76,7 @@ eval_tests = [
     Row('min(1,3)', 1),
     Row('round(3.14159, 2)', 3.14),
     Row('roundup(10/9, 0)', 2),
+    Row('-pmt(0.1, 25, 1)', 0.11016807219002082),
 ]
 
 eval_symbols = {

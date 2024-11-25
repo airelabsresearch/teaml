@@ -122,6 +122,7 @@ class Computer:
             'iferror': iferror,
             'irr': unsupported,
             'iserror': iserror,
+            'pmt': unsupported,
             'npv': unsupported,
             'range':listify(builtins.range),
             'roundup': roundup,
@@ -130,10 +131,12 @@ class Computer:
 
     def load_xirr(self):
         try:
-            from pyxirr import irr, npv
+            import pyxirr as xfn
+            # from pyxirr import irr, npv, pmt
             return {
-                'irr': lambda values, guess: irr(values, guess=guess),
-                'npv': npv,
+                'irr': lambda values, guess: xfn.irr(values, guess=guess),
+                'npv': xfn.npv,
+                'pmt': xfn.pmt,
             }
         except ImportError:
             print("Warning: pyxirr not available.  No IRR/NPV functions.")
