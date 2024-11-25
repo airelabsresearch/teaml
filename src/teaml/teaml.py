@@ -82,6 +82,8 @@ class Teaml:
         for node in self.formula_nodes:
             if isinstance(node, NodeNone):
                 self.compute_node(node.key)
+        if self.errors:
+            return self.errors
 
     def compute_node(self, key):
         container = self.find_container(key)
@@ -162,7 +164,7 @@ class Teaml:
         return all([n in context for n in needs])
 
     def __init__(self, root):
-        self.root = root
+        self.root = deepcopy(root)
 
     def copy(self):
         return Teaml(deepcopy(self.root))

@@ -32,3 +32,12 @@ def test_str_add():
     raw = tea.raw('broken')
     assert raw == broken.raw
     assert tea.errors == ["#error(type: unsupported operand type(s) for +: 'int' and 'str')"]
+
+def test_copy():
+    # https://linear.app/airelabs/issue/AIR-238/teaml-init-should-deepcopy-dicts
+    data = computed1().root
+    tea = tml.Teaml(data)
+    assert tea['capacity value'].value == 100
+    tea['capacity value']= 200
+    tea = tml.Teaml(data)
+    assert tea['capacity value'].value == 100
