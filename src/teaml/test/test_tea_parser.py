@@ -77,6 +77,7 @@ eval_tests = [
     Row('round(3.14159, 2)', 3.14),
     Row('roundup(10/9, 0)', 2),
     Row('-pmt(0.1, 25, 1)', 0.11016807219002082),
+    Row('sumif([1,2,3], ["n", "y", "y"], "y")', 5),
 ]
 
 eval_symbols = {

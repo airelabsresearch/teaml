@@ -27,6 +27,10 @@ def roundup(number, digits=0):
     multiplier = 10 ** digits
     return math.ceil(number * multiplier) / multiplier
 
+def sumif(values_range, criteria_range, criterion):
+    """Implements Excel's SUMIF in Python."""
+    return sum(value for crit, value in zip(criteria_range, values_range) if crit == criterion)
+
 class Parser:
     def __init__(self, source, sandbox):
         self.source = source
@@ -126,6 +130,7 @@ class Computer:
             'npv': unsupported,
             'range':listify(builtins.range),
             'roundup': roundup,
+            'sumif': sumif,
         }
         self.sandbox.update(self.load_xirr())
 
