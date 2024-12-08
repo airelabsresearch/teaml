@@ -34,6 +34,12 @@ def sumif(values_range, criteria_range, criterion):
     """Implements Excel's SUMIF in Python."""
     return sum(value for crit, value in zip(criteria_range, values_range) if crit == criterion)
 
+def IF(condition, true_value, false_value):
+    """Basic excel-like IF"""
+    if condition:
+        return true_value
+    return false_value
+
 class Parser:
     def __init__(self, source, sandbox):
         self.source = source
@@ -135,6 +141,7 @@ class Computer:
             'range':listify(builtins.range),
             'roundup': roundup,
             'sumif': sumif,
+            'IF':IF,
         }
         self.sandbox.update(self.load_xirr())
 

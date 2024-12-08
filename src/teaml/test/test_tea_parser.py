@@ -79,6 +79,7 @@ eval_tests = [
     Row('-pmt(0.1, 25, 1)', 0.11016807219002082),
     Row('sumif([1,2,3], ["n", "y", "y"], "y")', 5),
     Row('concat("a", "b")', 'ab'),
+    Row('IF(b<3,1,2)', 1),
 ]
 
 eval_symbols = {
