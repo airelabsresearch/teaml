@@ -20,6 +20,7 @@ def test_div():
     assert b / a == [4, 1, 0.25]
     assert a / 2 == [0.5, 1, 2]
     assert a / 2.5 == [0.4, 0.8, 1.6]
+    assert 1 / a == [1.0, 0.5, 0.25]
 
 def test_add():
     a = Vector([1, 2, 3])

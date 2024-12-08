@@ -28,7 +28,11 @@ class Vector(list):
             return Vector([x / y for x, y in zip(self, other)])
 
     def __rtruediv__(self, other):
-        return other / self
+        if isinstance(other, (int, float)):
+            return Vector([other / x for x in self])
+        if isinstance(other, Vector):
+            assert len(self) == len(other), f"Vector lengths: {len(self)} != {len(other)}"
+            return Vector([x / y for x, y in zip(other, self)])
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
