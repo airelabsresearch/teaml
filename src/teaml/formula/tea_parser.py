@@ -26,6 +26,16 @@ def strip(source):
         k:v for k,v in source.items()
         if k not in ['lineno','col_offset','end_lineno','end_col_offset', 'keywords', 'type_ignores']}
 
+def clean_error(e):
+    """
+    These strings are awkward for yaml
+    """
+    return (str(e)
+        .replace('"', "")
+        .replace("'", "")
+        .replace(": ", ":")
+    )
+
 def roundup(number, digits=0):
     multiplier = 10 ** digits
     return math.ceil(number * multiplier) / multiplier
@@ -181,12 +191,12 @@ class Computer:
             # TODO: ast.literal_eval
             return eval(formula, local_sandbox, context)
         except TypeError as e:
-            return f'#error(type: {str(e)})'
+            return f'#error(type {clean_error(e)})'
         except ZeroDivisionError:
             return '#error(zerodiv)'
         except KeyError as e:
-            return f'#error(key: {str(e)})'
+            return f'#error(key {clean_error(e)})'
         except Exception as e:
-            return f'#error({str(e)})'
+            return f'#error({clean_error(e)})'
 
 computer = Computer()
