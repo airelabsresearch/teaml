@@ -7,9 +7,9 @@ from pathlib import Path
 from typing import List
 import yaml
 
-from teaml.container import find_container
+from teaml.container import find_container, AmbigousNameError
 from teaml.node import Node, NodeDict, NodeNone, NodeRange
-from teaml.formula.tea_parser import computer, create_namedtuples, filter_bases
+from teaml.formula.tea_parser import computer, create_namedtuples, filter_bases, iserror
 from teaml.formula.vector import Vector
 from teaml.utils import single_type, munge
 
@@ -98,23 +98,34 @@ class Teaml:
         container = self.find_container(key)
         existing_node = Node.new(container.value)
 
-        for name in existing_node.references:
+        self.compute_children(existing_node)
+        context = self.build_context(key)
+        formula = existing_node.formula
+        formula = munge(formula) # TODO replace with code specific to formula
+        if not formula:
+            return existing_node.value
+
+        errors = [v for v in context.values() if iserror(v)]
+        result = None
+        if errors:
+            result = errors[0]
+        else:
+            result = computer.compute(formula, context)
+        # TODO: Move this
+        value = f'={formula} ={result}'
+        self[key] = value
+        return result
+
+    def compute_children(self, node):
+        for name in node.references:
             try:
                 child = self.find(name)
             except KeyError:
-                return f'#error(key: {name})'
+                return f'#error(Key {name})'
+            except AmbigousNameError as e:
+                return f'#error(ambigous {e})'
             if isinstance(child, NodeNone):
                 self.compute_node(name)
-
-        context = self.build_context(key)
-        formula = existing_node.formula
-        if not formula:
-            return existing_node.value
-        formula = munge(formula) # TODO replace with code specific to formula
-        result = computer.compute(formula, context)
-        # TODO: Move this
-        self[key] = f'={formula} ={result}'
-        return result
 
     TraceReport = namedtuple('TraceReport', ['key', 'value', 'depth', 'references'])
     def trace(self, node, seen=None, depth=0, report=None):
@@ -160,7 +171,7 @@ class Teaml:
     def build_context(self, node):
         if not isinstance(node, Node) and isinstance(node, str):
             node = self.find(node)
-        context = {name: self.find(name).value for name in node.references}
+        context = {name: self.get_value(name) for name in node.references}
         # TODO: move this
         for k in context:
             if isinstance(context[k], list):

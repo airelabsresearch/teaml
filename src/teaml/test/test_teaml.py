@@ -14,6 +14,8 @@ outer:
     label: one
     total: =mixed.capacity + mixed.capacity value
     broken: =total + label
+    bad_ref: =total + missing
+    ambiguous_ref: =cap + 2
 ''')
 
 def computed1():
@@ -31,7 +33,11 @@ def test_str_add():
     broken = tea['broken']
     raw = tea.raw('broken')
     assert raw == broken.raw
-    assert tea.errors == ["#error(type: unsupported operand type(s) for +: 'int' and 'str')"]
+    assert tea.errors == [
+        "#error(type unsupported operand type(s) for +:int and str)",
+        '#error(Key:missing)',
+        '#error(Ambigous:cap matches outer.inputs.mixed level.capacity, outer.inputs.mixed level.capacity value, outer.outputs.capacity)',
+    ]
 
 def test_copy():
     # https://linear.app/airelabs/issue/AIR-238/teaml-init-should-deepcopy-dicts
@@ -41,3 +47,8 @@ def test_copy():
     tea['capacity value']= 200
     tea = tml.Teaml(data)
     assert tea['capacity value'].value == 100
+
+def test_key_error():
+    tea = computed1()
+    assert tea['bad_ref'].value == '#error(Key:missing)'
+    assert tea['ambiguous_ref'].value == '#error(Ambigous:cap matches outer.inputs.mixed level.capacity, outer.inputs.mixed level.capacity value, outer.outputs.capacity)'

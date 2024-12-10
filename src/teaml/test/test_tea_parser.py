@@ -81,8 +81,8 @@ eval_tests = [
     Row('concat("a", "b")', 'ab'),
     Row('IF(b<3,1,2)', 1),
     Row('-pmt(0.1, 25, broken)', "#error(#error(upstream failure))"),
-    Row('irr(irr_range, broken)', "#error(type: argument 'guess': must be real number, not str)"),
-    Row('npv(0.1, broken)', "#error(type: argument 'amounts': must be real number, not str)"),
+    Row('irr(irr_range, broken)', "#error(type argument guess:must be real number, not str)"),
+    Row('npv(0.1, broken)', "#error(type argument amounts:must be real number, not str)"),
 ]
 
 eval_symbols = {
