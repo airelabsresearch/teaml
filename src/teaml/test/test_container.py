@@ -57,3 +57,8 @@ def test_path_match():
         pm = PathMatch(path=test.path, search=test.search)
         assert pm.pattern == test.pattern
         assert pm.score == test.score
+
+def test_ambiguous():
+    data = container1()
+    with pytest.raises(ValueError):
+        find_container(data, 'cap')

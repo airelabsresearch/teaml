@@ -6,6 +6,11 @@ from collections import namedtuple
 
 from teaml.utils import munge
 
+class AmbigousNameError(ValueError):
+    def __init__(self, search, paths):
+        paths = ', '.join(['.'.join(p) for p in paths])
+        super().__init__(f"Ambigous name: {search} matches {paths}")
+
 def child_dicts(parent:dict):
     return [(k,v) for (k,v) in parent.items() if isinstance(v, dict)]
 
@@ -32,7 +37,7 @@ def find_container(node:dict, search:str):
 
     if len(leaves) > 1 and leaves[0].matches.score == leaves[1].matches.score:
         paths = [l.path for l in leaves]
-        raise ValueError(f"Multiple matches for {search}: {paths}")
+        raise AmbigousNameError(search, paths)
 
     container, key, path, _ = leaves[0]
     return Result(container, key, container[key], path)
