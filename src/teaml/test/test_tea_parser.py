@@ -80,6 +80,9 @@ eval_tests = [
     Row('sumif([1,2,3], ["n", "y", "y"], "y")', 5),
     Row('concat("a", "b")', 'ab'),
     Row('IF(b<3,1,2)', 1),
+    Row('-pmt(0.1, 25, broken)', "#error(#error(upstream failure))"),
+    Row('irr(irr_range, broken)', "#error(type: argument 'guess': must be real number, not str)"),
+    Row('npv(0.1, broken)', "#error(type: argument 'amounts': must be real number, not str)"),
 ]
 
 eval_symbols = {
@@ -88,6 +91,7 @@ eval_symbols = {
     'c': 3,
     'irr_range': [-1, 0, 1, 2, 3],
     'npv_range': [-115_000_000, 17_853_058, 20_920_596, 18_003_174],
+    'broken': '#error(upstream failure)',
 }
 
 def test_evals():

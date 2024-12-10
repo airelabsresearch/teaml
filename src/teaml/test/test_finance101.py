@@ -65,3 +65,16 @@ def test_battery_mult(finance101yaml):
 def test_npv(finance101yaml):
     fin = tml.loads(finance101yaml)
     assert fin.compute('NPV') == 68746191.83357899
+
+def test_irr(finance101yaml):
+    fin = tml.loads(finance101yaml)
+
+    tea = fin.copy()
+    assert tea.compute('IRR') == 0.1904322297190342
+
+    tea = fin.copy()
+    tea['SolarCapacity'] = 58.0
+    assert tea.compute('IRR') == 0.21242872060127135
+
+    
+

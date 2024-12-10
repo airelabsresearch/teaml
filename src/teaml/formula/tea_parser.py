@@ -148,11 +148,20 @@ class Computer:
     def load_xirr(self):
         try:
             import pyxirr as xfn
-            # from pyxirr import irr, npv, pmt
+
+            # https://linear.app/airelabs/issue/AIR-317/pyxirrpmt-segfaults-with-str-input
+            def safety_wrapper(fn):
+                def wrapped(*args, **kwargs):
+                    errors = [a for a in list(args) + list(kwargs.values()) if isinstance(a, str)]
+                    if errors:
+                        raise ValueError(errors[0])
+                    return fn(*args, **kwargs)
+                return wrapped
+
             return {
                 'irr': lambda values, guess: xfn.irr(values, guess=guess),
                 'npv': xfn.npv,
-                'pmt': xfn.pmt,
+                'pmt': safety_wrapper(xfn.pmt),
             }
         except ImportError:
             print("Warning: pyxirr not available.  No IRR/NPV functions.")
