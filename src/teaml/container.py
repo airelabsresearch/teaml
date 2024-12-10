@@ -9,7 +9,7 @@ from teaml.utils import munge
 class AmbigousNameError(ValueError):
     def __init__(self, search, paths):
         paths = ', '.join(['.'.join(p) for p in paths])
-        super().__init__(f"Ambigous name: {search} matches {paths}")
+        super().__init__(f"{search} matches {paths}")
 
 def child_dicts(parent:dict):
     return [(k,v) for (k,v) in parent.items() if isinstance(v, dict)]
