@@ -57,6 +57,15 @@ class Teaml:
         container = self.find_container(key)
         return container.value
 
+    def get_value(self, key):
+        try:
+            node = self.find(key)
+        except KeyError:
+            return f'#error(Key:{key})'
+        except AmbigousNameError as e:
+            return f'#error(Ambigous:{e})'
+        return node.value
+
     def __getitem__(self, key):
         return self.find(key)
 
